@@ -1,6 +1,6 @@
 # Rydz
 
-> *"Lepszy rydz niż nic"*
+> *"Lepszy rydz niż nic"* — Polish proverb meaning "better something than nothing"
 
 Build and deploy LLM-based classifiers in minutes, not days.
 
@@ -54,6 +54,20 @@ results = list(tmap_unordered(classify, texts, workers=16))
 
 This means: **high throughput, low cost, low latency**. Thousands of input tokens, 1 output token.
 
+## Why logprobs?
+
+| approach | calls per classification | confidence score | training data | setup time |
+| - | - | - | - | - |
+| **Rydz (logprobs)** | **1** | **yes, native** | **none** | **minutes** |
+| LLM + text parsing | 1 | no | none | minutes |
+| LLM + repeated sampling | 5–20 | approximate | none | minutes |
+| fine-tuned model | 1 | yes | hundreds+ | days–weeks |
+| classical ML | 1 | yes | thousands+ | days–weeks |
+
+Logprobs give you calibrated confidence in a single call. No repeated sampling, no parsing "yes"/"no" from free text, no training data collection. You get a probability distribution over your labels — directly from the model's internals.
+
+**[Real-world benchmark:](https://www.linkedin.com/feed/update/urn:li:activity:7431396065020583936/)** 280 text fragments × 8 classification criteria (~1.5M input tokens, 2000+ data points) — processed in **36 seconds for $0.25** using two cloud providers in parallel, or **4 minutes** using a local model (Bielik).
+
 ## Features
 
 - **One thing, done well** — logprobs-based classification
@@ -106,14 +120,15 @@ register_provider("myprovider", "https://api.example.com/v1")
 
 ## Use cases
 
-- sentiment analysis in reviews / social media
-- content moderation
-- support ticket classification
-- ad profile matching to articles
-- content complexity vs target audience
-- contract risk clause detection
-- scene / emotion tagging in narratives
-- safety analysis of AI-generated code
+**E-commerce & Marketing** — sentiment analysis in product reviews, matching ad profiles to article content, brand monitoring on social media
+
+**Customer Support** — automatic ticket categorization and priority routing, intent detection in customer messages
+
+**Media & Publishing** — content moderation, scene and emotion tagging in narratives, content complexity matching to target audience
+
+**Legal & Compliance** — contract risk clause detection, document confidentiality classification
+
+**Software & AI** — safety analysis of AI-generated code, detecting policy violations in LLM outputs
 
 ## License
 
