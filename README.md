@@ -132,7 +132,7 @@ Models use the `provider:model_name` convention:
 
 ```python
 from rydz import register_provider
-register_provider("myprovider", "https://api.example.com/v1", quirks={"top_logprobs": 10})
+register_provider("myprovider", "https://api.example.com/v1", quirks={"max_tokens": 4})
 # uses MYPROVIDER_API_KEY env variable, model string: "myprovider:model-name"
 ```
 
@@ -143,7 +143,7 @@ from rydz import register_alias
 register_alias("openai2", "openai")
 # uses OPENAI2_API_KEY env variable, model string: "openai2:gpt-4.1-nano"
 
-register_alias("openai3", "openai", quirks={"max_tokens": 4})
+register_alias("openai3", "openai", quirks={"top_logprobs": 10})
 # same as above but with custom quirks
 ```
 
