@@ -1,9 +1,9 @@
 # Rydz
 
 Features:
-- easy to use / focused on only one thing
-- multiple providers (with all their quirks) hidden behind a simple API
-- opinionated but elastic (ie. using multiple keys with a single provider)
+- focused on only one thing
+- multiple API providers (with all their quirks) hidden behind a simple API
+- opinionated but elastic design (ie. using multiple keys with a single provider)
 - minimal dependencies (openai)
 
 # License
@@ -19,8 +19,8 @@ You can also install it directly from github: `pip install git+https://github.co
 # Supported providers
 
 ## local
-| provider | environmental variables |
-| - | - |
+| provider | environmental variables | notes |
+| - | - | - |
 | lmstudio | LMSTUDIO_API_KEY |
 
 ## cloud
