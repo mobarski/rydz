@@ -35,14 +35,14 @@ print(f"negative: {get_probability(resp, 'NEGATIVE'):.1%}")
 ## Parallel classification
 
 ```python
-from rydz import get_logprobs_response, get_probability, tmap_unordered
+from rydz import get_logprobs_response, get_probability, tmap
 
 def classify(text):
     prompt = f"Is this spam? Answer YES or NO.\n\n{text}\n\nAnswer:"
     resp = get_logprobs_response("together:meta-llama/Llama-3-70b-chat-hf", prompt)
     return get_probability(resp, "YES")
 
-results = list(tmap_unordered(classify, texts, workers=16))
+results = list(tmap(classify, texts, workers=16))
 ```
 
 ## How it works

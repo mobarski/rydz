@@ -3,4 +3,4 @@ from .logprobs import (
     get_logprobs_response,
     get_probability,
 )
-from .utils import tmap_unordered
+from .utils import tmap, tmap_unordered
