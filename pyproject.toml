@@ -1,7 +1,7 @@
 [project]
 name = "rydz"
 version = "0.1.0"
-description = ""
+description = "LLM-based classification via logprobs — one call, one token, full confidence scores"
 requires-python = ">=3.9"
 dependencies = [
     "openai>=2.21.0",
@@ -9,6 +9,14 @@ dependencies = [
 license = "MIT"
 authors = [{ name = "Maciej Obarski" }]
 readme = "README.md"
+keywords = ["llm", "classification", "logprobs"]
+classifiers = [
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Intended Audience :: Developers",
+]
+
+[project.urls]
+Homepage = "https://github.com/mobarski/rydz"
 
 [dependency-groups]
 dev = ["pytest>=8.0.0"]
