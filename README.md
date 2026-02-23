@@ -65,7 +65,7 @@ This means: **high throughput, low cost, low latency**. Thousands of input token
 
 Logprobs give you calibrated confidence in a single call. No repeated sampling, no parsing "yes"/"no" from free text, no training data collection. You get a probability distribution over your labels — directly from the model's internals.
 
-**[Real-world benchmark:](https://www.linkedin.com/feed/update/urn:li:activity:7431396065020583936/)** 280 text fragments × 8 classification criteria (~1.5M input tokens, 2000+ data points) — processed in **36 seconds for $0.25** using two cloud providers in parallel, or **4 minutes** using a local model (Bielik).
+**[Real-world benchmark:](https://www.linkedin.com/feed/update/urn:li:activity:7431396065020583936/)** 280 book fragments × 8 classification criteria (~1.5M input tokens, 2200+ data points) — processed in **36 seconds for $0.25** using two cloud providers in parallel, or **4 minutes** using a local model (Bielik) on a single RTX 3090.
 
 ## Beyond naive classifiers
 
@@ -89,6 +89,8 @@ You don't have to pick one — start simple, scale up when needed.
 ```bash
 pip install git+https://github.com/mobarski/rydz
 ```
+
+In the future it will be added to the PyPI.
 
 ## Model format
 
