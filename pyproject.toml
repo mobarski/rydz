@@ -1,0 +1,13 @@
+[project]
+name = "rydz"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.13"
+dependencies = []
+license = "MIT"
+authors = [{ name = "mobarski" }]
+readme = "README.md"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
