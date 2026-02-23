@@ -52,5 +52,16 @@ def register_provider(provider, base_url, quirks=None):
     if quirks is not None:
         QUIRKS[provider] = quirks
 
+
+def register_alias(alias, provider, quirks=None):
+    """Register alias for an existing provider (copies base_url and quirks). Useful for multiple API keys."""
+    if provider not in BASE_URL:
+        raise ValueError(f"Unknown provider: {provider}")
+    BASE_URL[alias] = BASE_URL[provider]
+    merged = {**QUIRKS.get(provider, {}), **(quirks or {})}
+    if merged:
+        QUIRKS[alias] = merged
+
+
 def model_name(model):
     return model.split(':')[1]

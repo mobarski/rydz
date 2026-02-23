@@ -58,10 +58,9 @@ This means: **high throughput, low cost, low latency**. Thousands of input token
 
 | approach | calls per classification | confidence score | training data | setup time |
 | - | - | - | - | - |
-| **Rydz (logprobs)** | **1** | **yes, native** | **none** | **minutes** |
-| LLM + text parsing | 1 | no | none | minutes |
+| **Rydz (LLM + logprobs)** | **1** | **yes, native** | **none** | **minutes** |
+| LLM + text parsing OR structured output| 1 | no | none | minutes |
 | LLM + repeated sampling | 5–20 | approximate | none | minutes |
-| fine-tuned model | 1 | yes | hundreds+ | days–weeks |
 | classical ML | 1 | yes | thousands+ | days–weeks |
 
 Logprobs give you calibrated confidence in a single call. No repeated sampling, no parsing "yes"/"no" from free text, no training data collection. You get a probability distribution over your labels — directly from the model's internals.
@@ -124,15 +123,19 @@ Models use the `provider:model_name` convention:
 
 ```python
 from rydz import register_provider
-register_provider("myprovider", "https://api.example.com/v1")
+register_provider("myprovider", "https://api.example.com/v1", quirks={"top_logprobs": 10})
 # uses MYPROVIDER_API_KEY env variable, model string: "myprovider:model-name"
 ```
 
-This also lets you use **multiple API keys from the same provider** — useful for higher rate limits or separate billing:
+You can also create **aliases for existing providers** — useful for multiple API keys (higher rate limits, separate billing):
 
 ```python
-register_provider("openai2", "https://api.openai.com/v1")
+from rydz import register_alias
+register_alias("openai2", "openai")
 # uses OPENAI2_API_KEY env variable, model string: "openai2:gpt-4.1-nano"
+
+register_alias("openai3", "openai", quirks={"max_tokens": 4})
+# same as above but with custom quirks
 ```
 
 ## Use cases
@@ -146,6 +149,8 @@ register_provider("openai2", "https://api.openai.com/v1")
 **Legal & Compliance** — contract risk clause detection, document confidentiality classification
 
 **Software & AI** — safety analysis of AI-generated code, detecting policy violations in LLM outputs
+
+These are just examples. For best results, point your favorite AI assistant to this repo and ask how Rydz can help in *your* business.
 
 ## License
 
