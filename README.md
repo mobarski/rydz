@@ -67,6 +67,12 @@ Logprobs give you calibrated confidence in a single call. No repeated sampling, 
 
 **[Real-world benchmark:](https://www.linkedin.com/feed/update/urn:li:activity:7431396065020583936/)** 280 book fragments × 8 classification criteria (~1.5M input tokens, 2200+ data points) — processed in **36 seconds for $0.25** using two cloud providers in parallel, or **4 minutes** using a local model (Bielik) on a single RTX 3090.
 
+## Model selection
+
+Rydz works best with **instruction-tuned** (chat) models — they follow the prompt and put the answer label as the first token, which is exactly what logprobs extraction needs.
+
+**Avoid reasoning/thinking models** (o1, o3, DeepSeek-R1, etc.) — they emit chain-of-thought tokens before the answer, pushing the label out of the first-token position and making logprobs useless for classification.
+
 ## Beyond naive classifiers
 
 A single model with a hand-crafted prompt is just the starting point. Rydz's low cost and high throughput make it practical to build more advanced systems:
