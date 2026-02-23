@@ -71,7 +71,7 @@ Logprobs give you calibrated confidence in a single call. No repeated sampling, 
 
 Rydz works best with **instruction-tuned** (chat) models — they follow the prompt and put the answer label as the first token, which is exactly what logprobs extraction needs.
 
-**Avoid reasoning/thinking models** (o1, o3, DeepSeek-R1, etc.) — they emit chain-of-thought tokens before the answer, pushing the label out of the first-token position and making logprobs useless for classification.
+**Avoid (for now) reasoning/thinking models** (o1, o3, DeepSeek-R1, etc.) — they emit chain-of-thought tokens before the answer, pushing the label out of the first-token position and making logprobs harder to use for classification.
 
 ## Beyond naive classifiers
 
@@ -164,6 +164,11 @@ register_alias("openai3", "openai", quirks={"top_logprobs": 10})
 **Software & AI** — safety analysis of AI-generated code, detecting policy violations in LLM outputs
 
 These are just examples. For best results, point your favorite AI assistant to this repo and ask how Rydz can help in *your* business.
+
+## Planned features
+
+- **Thinking/reasoning models support** — handle chain-of-thought tokens to extract logprobs from models like GLM-5, Kimi K2.5, Qwen3.5, DeepSeek V3.2, etc.
+- **Multimodal input** — classify images alongside text using vision-capable models
 
 ## License
 
