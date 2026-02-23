@@ -103,10 +103,11 @@ In the future it will be added to the PyPI.
 Models use the `provider:model_name` convention:
 
 ```python
-"openai:gpt-4o-mini"
-"xai:grok-2"
-"together:meta-llama/Llama-3-70b-chat-hf"
-"lmstudio:bielik-11b"
+"openai:gpt-4.1-nano"
+"xai:grok-4-1-fast-non-reasoning"
+"together:moonshotai/Kimi-K2-Instruct-0905"
+"hyperbolic:Qwen/Qwen3-Next-80B-A3B-Instruct"
+"lmstudio:bielik-11b-v3.0-instruct"
 ```
 
 ## Supported providers
