@@ -68,6 +68,15 @@ Logprobs give you calibrated confidence in a single call. No repeated sampling, 
 
 **[Real-world benchmark:](https://www.linkedin.com/feed/update/urn:li:activity:7431396065020583936/)** 280 text fragments × 8 classification criteria (~1.5M input tokens, 2000+ data points) — processed in **36 seconds for $0.25** using two cloud providers in parallel, or **4 minutes** using a local model (Bielik).
 
+## Beyond naive classifiers
+
+A single model with a hand-crafted prompt is just the starting point. Rydz's low cost and high throughput make it practical to build more advanced systems:
+
+- **Ensemble / majority voting** — score the same input with multiple models and aggregate results for higher accuracy and resilience
+- **Automatic prompt optimization** — integrate with frameworks like [DSPy](https://github.com/stanfordnlp/dspy) to optimize prompts systematically instead of relying on intuition alone
+
+You don't have to pick one — start simple, scale up when needed.
+
 ## Features
 
 - **One thing, done well** — logprobs-based classification
@@ -116,6 +125,14 @@ Models use the `provider:model_name` convention:
 ```python
 from rydz import register_provider
 register_provider("myprovider", "https://api.example.com/v1")
+# uses MYPROVIDER_API_KEY env variable, model string: "myprovider:model-name"
+```
+
+This also lets you use **multiple API keys from the same provider** — useful for higher rate limits or separate billing:
+
+```python
+register_provider("openai2", "https://api.openai.com/v1")
+# uses OPENAI2_API_KEY env variable, model string: "openai2:gpt-4.1-nano"
 ```
 
 ## Use cases
