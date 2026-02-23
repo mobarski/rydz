@@ -149,7 +149,7 @@ register_alias("openai3", "openai", quirks={"top_logprobs": 10})
 
 ## Use cases
 
-**E-commerce & Marketing** — sentiment analysis in product reviews, matching ad profiles to article content, brand monitoring on social media
+**E-commerce & Marketing** — sentiment analysis in product reviews, matching ad profiles to article content
 
 **Customer Support** — automatic ticket categorization and priority routing, intent detection in customer messages
 
