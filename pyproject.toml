@@ -3,9 +3,11 @@ name = "rydz"
 version = "0.1.0"
 description = ""
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "openai>=2.21.0",
+]
 license = "MIT"
-authors = [{ name = "mobarski" }]
+authors = [{ name = "Maciej Obarski" }]
 readme = "README.md"
 
 [build-system]
