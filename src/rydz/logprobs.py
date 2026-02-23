@@ -3,7 +3,6 @@ import os
 import threading
 import time
 import types
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import openai
 
@@ -123,13 +122,3 @@ def get_probability(resp, answer):
             p_total += exp(x.logprob)
     return p_total
 
-
-# threading based parallel map
-def tmap(func, iterable, workers=os.cpu_count()):
-    if workers == 1:
-        yield from (func(item) for item in iterable)
-        return
-    with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = [executor.submit(func, item) for item in iterable]
-        for future in as_completed(futures):
-            yield future.result()
