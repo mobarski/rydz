@@ -1,5 +1,5 @@
+from .client import register_provider
 from .logprobs import (
-    register_provider,
     get_logprobs_response,
     get_probability,
 )
