@@ -95,6 +95,10 @@ You don't have to pick one — start simple, scale up when needed.
 ```bash
 pip install git+https://github.com/mobarski/rydz
 ```
+or
+```bash
+uv pip install git+https://github.com/mobarski/rydz
+```
 
 In the future it will be added to the PyPI.
 
