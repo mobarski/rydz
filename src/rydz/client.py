@@ -43,8 +43,12 @@ def _get_base_url(model):
 
 def _get_api_key(model, default='NONE'):
     provider = model.partition(':')[0]
-    env_var = f"{provider.upper()}_API_KEY"
-    return os.getenv(env_var, default)
+    if 'get_api_key' in QUIRKS.get(provider, {}):
+        fun = QUIRKS[provider]['get_api_key']
+        return fun(model)
+    else:
+        env_var = f"{provider.upper()}_API_KEY"
+        return os.getenv(env_var, default)
 
 
 def register_provider(provider, base_url, quirks=None):
@@ -61,6 +65,12 @@ def register_alias(alias, provider, quirks=None):
     merged = {**QUIRKS.get(provider, {}), **(quirks or {})}
     if merged:
         QUIRKS[alias] = merged
+
+
+def set_quirk(provider, key, value):
+    """Register a quirk for an existing provider. Useful for custom providers."""
+    assert provider in QUIRKS, f"Provider {provider} not registered"
+    QUIRKS[provider][key] = value
 
 
 def model_name(model):

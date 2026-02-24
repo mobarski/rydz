@@ -151,6 +151,22 @@ register_alias("openai3", "openai", quirks={"top_logprobs": 10})
 # same as above but with custom quirks
 ```
 
+### secret manager integration
+
+By default, Rydz reads API keys from environment variables. In corporate environments you may need to fetch keys from a secret manager (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault, etc.). Use the `get_api_key` quirk:
+
+```python
+from rydz import set_quirk
+
+set_quirk("openai", "get_api_key", lambda model: vault.get_secret("openai-api-key"))
+```
+
+The function receives the full model string (e.g. `"openai:gpt-4.1-nano"`) so you can route different models to different secrets. Works with custom providers and aliases too:
+
+```python
+set_quirk("myprovider", "get_api_key", my_secret_manager.get_key)
+```
+
 ## Use cases
 
 **E-commerce & Marketing** — sentiment analysis in product reviews, matching ad profiles to article content
