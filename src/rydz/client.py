@@ -13,11 +13,14 @@ BASE_URL = {
     'xai':         "https://api.x.ai/v1/",
     'google':      "https://generativelanguage.googleapis.com/v1beta/",
     'cerebras':    "https://api.cerebras.ai/v1",
+    'novita':      "https://api.novita.ai/openai",
     'groq':        "https://api.groq.com/openai/v1", # NO LOGPROBS
     'baseten':     "https://inference.baseten.co/v1", # NO LOGPROBS
     'siliconflow': "https://api.siliconflow.com/v1", # NO LOGPROBS
+    'deepinfra':   "https://api.deepinfra.com/v1/openai", # NO LOGPROBS (streaming api only, one logprob per token)
+    'nebius':      "https://api.tokenfactory.nebius.com/v1/", # ??? ugly credit card input
 }
-# TODO: deepinfra, novita, nebius
+# TODO: novita, nebius
 QUIRKS = {
     'lmstudio':  {'endpoint': 'responses', 'max_tokens': 2},
     'openai':    {'max_tokens': 16},
