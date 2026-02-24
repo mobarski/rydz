@@ -5,7 +5,7 @@ import types
 from .client import _get_client, model_name, QUIRKS
 
 
-def _get_response_from_responses(prompt, model):
+def _get_response_from_responses(model, prompt):
     client = _get_client(model)
     provider = model.partition(':')[0]
     quirks = QUIRKS.get(provider, {})
@@ -27,7 +27,7 @@ def _get_response_from_responses(prompt, model):
     return resp
 
 
-def _get_response_from_chat(prompt, model):
+def _get_response_from_chat(model, prompt):
     client = _get_client(model)
     provider = model.partition(':')[0]
     quirks = QUIRKS.get(provider, {})
@@ -55,9 +55,9 @@ def get_logprobs_response(model, prompt):
     provider = model.partition(':')[0]
     quirks = QUIRKS.get(provider, {})
     if quirks.get('endpoint') == 'responses':
-        return _get_response_from_responses(prompt, model)
+        return _get_response_from_responses(model, prompt)
     else:
-        return _get_response_from_chat(prompt, model)
+        return _get_response_from_chat(model, prompt)
 
 
 def get_probability(resp, answer):
