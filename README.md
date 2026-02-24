@@ -39,7 +39,7 @@ from rydz import get_logprobs_response, get_probability, tmap
 
 def classify(text):
     prompt = f"Is this spam? Answer YES or NO.\n\n{text}\n\nAnswer:"
-    resp = get_logprobs_response("together:meta-llama/Llama-3-70b-chat-hf", prompt)
+    resp = get_logprobs_response("xai:grok-4-1-fast-non-reasoning", prompt)
     return get_probability(resp, "YES")
 
 results = list(tmap(classify, texts, workers=16))
