@@ -5,6 +5,7 @@ import types
 from .client import _get_client, model_name, QUIRKS
 
 
+# REF: https://developers.openai.com/api/reference/resources/responses/methods/create
 def _get_response_from_responses(model, prompt):
     client = _get_client(model)
     provider = model.partition(':')[0]
@@ -13,7 +14,7 @@ def _get_response_from_responses(model, prompt):
     resp = client.responses.create(
         model=model_name(model),
         input=prompt,
-        temperature=0.0,
+        temperature=quirks.get('temperature', 0.0),
         top_logprobs=quirks.get('top_logprobs', 20),
         max_output_tokens=quirks.get('max_tokens', 1),
         include=['message.output_text.logprobs'],
@@ -67,3 +68,46 @@ def get_probability(resp, answer):
         if answer.upper().startswith(t):
             p_total += exp(x.logprob)
     return p_total
+
+#################################
+
+# WIP
+# REF: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
+def _get_response_from_chat_thinking(model, prompt):
+    client = _get_client(model)
+    provider = model.partition(':')[0]
+    quirks = QUIRKS.get(provider, {})
+    t0 = time.perf_counter()
+    resp = client.chat.completions.create(
+        model=model_name(model),
+        messages=[{"role": "user", "content": prompt}],
+        temperature=1e-8,
+        #max_tokens=1,
+        logprobs=True,
+        top_logprobs=quirks.get('top_logprobs', 20),
+        #reasoning_effort='none',
+        #verbosity='low',
+    )
+    # TODO: total tokens (input + output + thinking[hidden])
+    return resp
+
+
+# WIP
+# TODO: quirks, aux
+# REF: # REF: https://developers.openai.com/api/reference/resources/responses/methods/create
+def _get_response_from_responses_thinking(model, prompt):
+    client = _get_client(model)
+    provider = model.partition(':')[0]
+    quirks = QUIRKS.get(provider, {})
+    t0 = time.perf_counter()
+    resp = client.responses.create(
+        model=model_name(model),
+        input=prompt,
+        temperature=0.0,
+        top_logprobs=quirks.get('top_logprobs', 20),
+        #max_output_tokens=10,
+        include=['message.output_text.logprobs'],
+        text={"verbosity": "low", "format": {"type": "text"}},
+        reasoning={"effort": "minimal", "summary": "concise"},
+    )
+    return resp

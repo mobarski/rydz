@@ -12,12 +12,18 @@ BASE_URL = {
     'openai':     "https://api.openai.com/v1",
     'xai':        "https://api.x.ai/v1/",
     'google':     "https://generativelanguage.googleapis.com/v1beta/",
+    'cerebras':   "https://api.cerebras.ai/v1",
+    'groq':       "https://api.groq.com/openai/v1", # NO LOGPROBS
+    'baseten':    "https://inference.baseten.co/v1", # NO LOGPROBS
+    'siliconflow': "https://api.siliconflow.com/v1", # NO LOGPROBS
 }
+# TODO: cerebras, baseten, siliconflow; deepinfra, novita, nebius, shareai
 QUIRKS = {
     'lmstudio':  {'endpoint': 'responses', 'max_tokens': 2},
     'openai':    {'max_tokens': 16},
     'xai':       {'top_logprobs': 8},
     'fireworks': {'top_logprobs': 5},
+    'cerebras':  {'temperature': 1e-8},
 }
 
 _client_cache = {}
