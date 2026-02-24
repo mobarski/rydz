@@ -81,7 +81,7 @@ def _get_response_from_chat_thinking(model, prompt):
     resp = client.chat.completions.create(
         model=model_name(model),
         messages=[{"role": "user", "content": prompt}],
-        temperature=1e-8,
+        temperature=quirks.get('temperature', 1e-8),
         #max_tokens=1,
         logprobs=True,
         top_logprobs=quirks.get('top_logprobs', 20),
@@ -98,12 +98,12 @@ def _get_response_from_chat_thinking(model, prompt):
 def _get_response_from_responses_thinking(model, prompt):
     client = _get_client(model)
     provider = model.partition(':')[0]
-    quirks = QUIRKS.get(provider, {})
+    quirks = QUIRKS.get(provider, {}) # TODO: add model quirks
     t0 = time.perf_counter()
     resp = client.responses.create(
         model=model_name(model),
         input=prompt,
-        temperature=0.0,
+        temperature=quirks.get('temperature', 0.0),
         top_logprobs=quirks.get('top_logprobs', 20),
         #max_output_tokens=10,
         include=['message.output_text.logprobs'],

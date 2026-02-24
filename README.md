@@ -183,9 +183,14 @@ These are just examples. For best results, point your favorite AI assistant to t
 
 ## Planned features
 
-- **Thinking/reasoning models support** — handle chain-of-thought tokens to extract logprobs from models like GLM-5, Kimi K2.5, Qwen3.5, DeepSeek V3.2, etc.
+- **Thinking/reasoning models support** — DONE in v0.2
 - **Multimodal input** — classify images alongside text using vision-capable models
 
 ## License
 
 MIT
+
+
+## Changelog
+
+- **0.2** -> thinking/reasoning models support

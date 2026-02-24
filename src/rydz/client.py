@@ -4,20 +4,20 @@ import threading
 import openai
 
 BASE_URL = {
-    'lmstudio':   "http://localhost:1234/v1",
-    'openrouter': "https://openrouter.ai/api/v1",
-    'hyperbolic': "https://api.hyperbolic.xyz/v1",
-    'fireworks':  "https://api.fireworks.ai/inference/v1",
-    'together':   "https://api.together.xyz/v1",
-    'openai':     "https://api.openai.com/v1",
-    'xai':        "https://api.x.ai/v1/",
-    'google':     "https://generativelanguage.googleapis.com/v1beta/",
-    'cerebras':   "https://api.cerebras.ai/v1",
-    'groq':       "https://api.groq.com/openai/v1", # NO LOGPROBS
-    'baseten':    "https://inference.baseten.co/v1", # NO LOGPROBS
+    'lmstudio':    "http://localhost:1234/v1",
+    'openrouter':  "https://openrouter.ai/api/v1",
+    'hyperbolic':  "https://api.hyperbolic.xyz/v1",
+    'fireworks':   "https://api.fireworks.ai/inference/v1",
+    'together':    "https://api.together.xyz/v1",
+    'openai':      "https://api.openai.com/v1",
+    'xai':         "https://api.x.ai/v1/",
+    'google':      "https://generativelanguage.googleapis.com/v1beta/",
+    'cerebras':    "https://api.cerebras.ai/v1",
+    'groq':        "https://api.groq.com/openai/v1", # NO LOGPROBS
+    'baseten':     "https://inference.baseten.co/v1", # NO LOGPROBS
     'siliconflow': "https://api.siliconflow.com/v1", # NO LOGPROBS
 }
-# TODO: cerebras, baseten, siliconflow; deepinfra, novita, nebius, shareai
+# TODO: deepinfra, novita, nebius
 QUIRKS = {
     'lmstudio':  {'endpoint': 'responses', 'max_tokens': 2},
     'openai':    {'max_tokens': 16},
