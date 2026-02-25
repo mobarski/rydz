@@ -9,26 +9,33 @@ from .client import _get_client, model_name, model_aux_str, QUIRKS
 def _get_response_from_responses(model, prompt, **kwargs):
     client = _get_client(model)
     provider = model.partition(':')[0]
+    aux_str = model_aux_str(model)
     quirks = QUIRKS.get(provider, {}).copy()
+    for tag in ['thinking']:
+        quirks[tag] = tag in aux_str
     quirks.update(kwargs)
     client_kwargs = dict(
         model=model_name(model),
         input=prompt,
         temperature=quirks.get('temperature', 0.0),
         top_logprobs=quirks.get('top_logprobs', 20),
-        max_output_tokens=quirks.get('max_tokens', 1),
+        max_output_tokens=quirks.get('max_tokens', 4096 if quirks['thinking'] else 1),
         include=['message.output_text.logprobs'],
-        #reasoning_effort='none',
-        #verbosity='low',
     )
+    if quirks['thinking']:
+        client_kwargs['text'] = {"verbosity": "low", "format": {"type": "text"}}
+        client_kwargs['reasoning'] = {"effort": "minimal", "summary": "concise"}
     t0 = time.perf_counter()
     resp = client.responses.create(**client_kwargs)
     resp.aux = types.SimpleNamespace()
     resp.aux.rtt = time.perf_counter() - t0
+    # usage
     resp.aux.input_tokens  = resp.usage.input_tokens
     resp.aux.output_tokens = resp.usage.output_tokens
-    all_logprobs = resp.output[0].content[0].logprobs
-    resp.aux.logprobs = _skip_thinking_logprobs(all_logprobs)
+    # TODO: thinking tokens
+    #
+    all_logprobs = resp.output[-1].content[0].logprobs
+    resp.aux.logprobs = _get_top_logprobs_skipping_thinking_tokens(all_logprobs)
     return resp
 
 
@@ -36,8 +43,8 @@ def _get_response_from_responses(model, prompt, **kwargs):
 def _get_response_from_chat(model, prompt, **kwargs):
     client = _get_client(model)
     provider = model.partition(':')[0]
-    quirks = QUIRKS.get(provider, {}).copy()
     aux_str = model_aux_str(model)
+    quirks = QUIRKS.get(provider, {}).copy()
     for tag in ['thinking']:
         quirks[tag] = tag in aux_str
     quirks.update(kwargs)
@@ -55,11 +62,13 @@ def _get_response_from_chat(model, prompt, **kwargs):
     resp = client.chat.completions.create(**client_kwargs)
     resp.aux = types.SimpleNamespace()
     resp.aux.rtt = time.perf_counter() - t0
+    # usage
     resp.aux.input_tokens  = resp.usage.prompt_tokens
     resp.aux.output_tokens = resp.usage.completion_tokens
     # TODO: thinking tokens from usage ???
+    #
     all_logprobs = resp.choices[0].logprobs.content
-    resp.aux.logprobs = _skip_thinking_logprobs(all_logprobs)
+    resp.aux.logprobs = _get_top_logprobs_skipping_thinking_tokens(all_logprobs)
     return resp
 
 
@@ -82,32 +91,7 @@ def get_probability(resp, answer):
 
 ### WIP - THINKING MODELS ##############################################################
 
-# REF: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
-def _get_response_from_chat_thinking(model, prompt, **kwargs):
-    client = _get_client(model)
-    provider = model.partition(':')[0]
-    quirks = QUIRKS.get(provider, {}).copy()
-    quirks.update(kwargs)
-    t0 = time.perf_counter()
-    resp = client.chat.completions.create(
-        model=model_name(model),
-        messages=[{"role": "user", "content": prompt}],
-        temperature=quirks.get('temperature', 0.0),
-        max_tokens=quirks.get('max_tokens', 1),
-        logprobs=True,
-        top_logprobs=quirks.get('top_logprobs', 20),
-        #reasoning_effort='none',
-        #verbosity='low',
-    )
-    # TODO: total tokens (input + output + thinking[hidden])
-    resp.aux = types.SimpleNamespace()
-    all_logprobs = resp.choices[0].logprobs.content
-    resp.aux.logprobs = _skip_thinking_logprobs(all_logprobs)
-    return resp
-
-
-# TODO: quirks, aux
-# REF: # REF: https://developers.openai.com/api/reference/resources/responses/methods/create
+# REF: https://developers.openai.com/api/reference/resources/responses/methods/create
 def _get_response_from_responses_thinking(model, prompt, **kwargs):
     client = _get_client(model)
     provider = model.partition(':')[0]
@@ -127,11 +111,11 @@ def _get_response_from_responses_thinking(model, prompt, **kwargs):
     )
     resp.aux = types.SimpleNamespace()
     all_logprobs = resp.output[0].content[0].logprobs
-    resp.aux.logprobs = _skip_thinking_logprobs(all_logprobs)
+    resp.aux.logprobs = _get_top_logprobs_skipping_thinking_tokens(all_logprobs)
     return resp
 
 
-def _skip_thinking_logprobs(logprobs):
+def _get_top_logprobs_skipping_thinking_tokens(logprobs):
     tokens = [t.token for t in logprobs]
     # detect presence of end-of-thinking anchor token
     for a in ['</think>', '<|message|>']: # TODO: ability to extend this list
