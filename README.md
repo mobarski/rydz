@@ -187,6 +187,7 @@ These are just examples. For best results, point your favorite AI assistant to t
 - **Multimodal input** — classify images alongside text using vision-capable models
 - **More local inference providers** — vllm, sglang, llama-server, ollama  
 - **More online inference providers** — huggingface, featherless, nscale, zai
+- **Advenced usage examples**  — evaluation, majority voting, automatic prompt optimization
 
 ## License
 
