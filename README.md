@@ -71,7 +71,13 @@ Logprobs give you calibrated confidence in a single call. No repeated sampling, 
 
 Rydz works best with **instruction-tuned** (chat) models — they follow the prompt and put the answer label as the first token, which is exactly what logprobs extraction needs.
 
-**Avoid (for now) reasoning/thinking models** (o1, o3, DeepSeek-R1, etc.) — they emit chain-of-thought tokens before the answer, pushing the label out of the first-token position and making logprobs harder to use for classification.
+**Reasoning/thinking models** (e.g. GLM-5, Kimi K2.5, DeepSeek V3.2) — they emit chain-of-thought tokens before the answer, so they require a higher `max_tokens` value, cost more, and take longer.
+
+To use reasoning models, add `thinking=True` to the `get_logprobs_response` call or `:thinking` to the model name:
+```python
+get_logprobs_response("together:moonshotai/Kimi-K2.5", prompt, thinking=True)
+get_logprobs_response("together:moonshotai/Kimi-K2.5:thinking", prompt)
+```
 
 ## Beyond naive classifiers
 
@@ -85,10 +91,11 @@ You don't have to pick one — start simple, scale up when needed.
 ## Features
 
 - **One thing, done well** — logprobs-based classification
-- **Multiple providers** — OpenAI, xAI, Together, Fireworks, Hyperbolic, OpenRouter, LM Studio
+- **Multiple providers** — OpenAI, xAI, Together, Fireworks, Hyperbolic, Cerebras, OpenRouter, LM Studio
 - **Provider quirks handled** — different APIs, limits, endpoints — all behind one interface
 - **Parallel processing** — classify thousands of items across providers in seconds
 - **Minimal dependencies** — just `openai`
+- **Thinking/reasoning models** — extract logprobs from first token after chain-of-thought (v0.2)
 
 ## Installation
 
@@ -104,7 +111,7 @@ In the future it will be added to the PyPI.
 
 ## Model format
 
-Models use the `provider:model_name` convention:
+Models use the `provider:model_name` convention (optional `:thinking` suffix for reasoning models):
 
 ```python
 "openai:gpt-4.1-nano"
@@ -112,6 +119,7 @@ Models use the `provider:model_name` convention:
 "together:moonshotai/Kimi-K2-Instruct-0905"
 "hyperbolic:Qwen/Qwen3-Next-80B-A3B-Instruct"
 "lmstudio:bielik-11b-v3.0-instruct"
+"together:moonshotai/Kimi-K2.5:thinking"
 ```
 
 ## Supported providers
@@ -129,6 +137,7 @@ Models use the `provider:model_name` convention:
 | together | TOGETHER_API_KEY | |
 | hyperbolic | HYPERBOLIC_API_KEY | |
 | fireworks | FIREWORKS_API_KEY | |
+| cerebras | CEREBRAS_API_KEY | |
 | openrouter | OPENROUTER_API_KEY | most inference providers = no logprobs |
 | google | GOOGLE_API_KEY | no logprobs |
 
@@ -183,7 +192,6 @@ These are just examples. For best results, point your favorite AI assistant to t
 
 ## Planned features
 
-- **Thinking/reasoning models support** — DONE in v0.2
 - **Multimodal input** — classify images alongside text using vision-capable models
 
 ## License
@@ -193,4 +201,4 @@ MIT
 
 ## Changelog
 
-- **0.2** -> thinking/reasoning models support
+- **0.2** — thinking/reasoning model support (logprobs extraction after chain-of-thought)
