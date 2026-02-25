@@ -18,15 +18,17 @@ BASE_URL = {
     'baseten':     "https://inference.baseten.co/v1", # NO LOGPROBS
     'siliconflow': "https://api.siliconflow.com/v1", # NO LOGPROBS
     'deepinfra':   "https://api.deepinfra.com/v1/openai", # NO LOGPROBS (streaming api only, one logprob per token)
+    'huggingface': "https://router.huggingface.co/v1", # NO LOGPROBS
     'nebius':      "https://api.tokenfactory.nebius.com/v1/", # ??? ugly credit card input
 }
 # TODO: novita, nebius
 QUIRKS = {
-    'lmstudio':  {'endpoint': 'responses', 'max_tokens': 2},
-    'openai':    {'max_tokens': 16},
-    'xai':       {'top_logprobs': 8},
-    'fireworks': {'top_logprobs': 5},
-    'cerebras':  {'temperature': 1e-8},
+    'lmstudio':    {'endpoint': 'responses', 'max_tokens': 2},
+    'openai':      {'max_tokens': 16},
+    'xai':         {'top_logprobs': 8},
+    'fireworks':   {'top_logprobs': 5},
+    'cerebras':    {'temperature': 1e-8},
+    'huggingface': {'get_api_key': lambda model: os.getenv('HF_TOKEN')},
 }
 
 _client_cache = {}
