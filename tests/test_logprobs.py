@@ -1,4 +1,5 @@
 from rydz import get_logprobs_response, get_probability
+import pytest
 
 
 def test_openai():
@@ -11,10 +12,15 @@ def test_openai():
     assert get_probability(resp, A) > 0.9
 
 
-def test_thinking_kwargs():
+THINKING_KWARGS_MODELS = [
+    "hyperbolic:openai/gpt-oss-120b",
+    "xai:grok-4-1-fast",
+    "together:MiniMaxAI/MiniMax-M2.5",
+]
+@pytest.mark.parametrize("model", THINKING_KWARGS_MODELS)
+def test_thinking_kwargs(model):
     P = "Is 42 > 24? Answer YES or NO."
     A = "YES"
-    model = "hyperbolic:openai/gpt-oss-120b"
     resp = get_logprobs_response(model, P, thinking=True)
     assert get_probability(resp, A) > 0.9
 
