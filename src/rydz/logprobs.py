@@ -14,12 +14,15 @@ def _get_response_from_responses(model, prompt, **kwargs):
     for tag in ['thinking']:
         quirks[tag] = tag in aux_str
     quirks.update(kwargs)
+    max_tokens = quirks.get('max_tokens', 1)
+    if quirks['thinking']:
+        max_tokens = max(max_tokens, quirks.get('max_tokens_thinking', 4096))
     client_kwargs = dict(
         model=model_name(model),
         input=prompt,
         temperature=quirks.get('temperature', 0.0),
         top_logprobs=quirks.get('top_logprobs', 20),
-        max_output_tokens=quirks.get('max_tokens', 4096 if quirks['thinking'] else 1), # TODO: thinking vs provider quirk
+        max_output_tokens=max_tokens,
         include=['message.output_text.logprobs'],
     )
     if quirks['thinking']:
@@ -48,11 +51,14 @@ def _get_response_from_chat(model, prompt, **kwargs):
     for tag in ['thinking']:
         quirks[tag] = tag in aux_str
     quirks.update(kwargs)
+    max_tokens = quirks.get('max_tokens', 1)
+    if quirks['thinking']:
+        max_tokens = max(max_tokens, quirks.get('max_tokens_thinking', 4096))
     client_kwargs = dict(
         model=model_name(model),
         messages=[{"role": "user", "content": prompt}],
         temperature=quirks.get('temperature', 0.0),
-        max_completion_tokens=quirks.get('max_tokens', 4096 if quirks['thinking'] else 1), # TODO: thinking vs provider quirk
+        max_completion_tokens=max_tokens,
         logprobs=quirks.get('logprobs', True),
         top_logprobs=quirks.get('top_logprobs', 20),
         #reasoning_effort='low',
