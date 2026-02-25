@@ -52,10 +52,10 @@ def _get_response_from_chat(model, prompt, **kwargs):
         model=model_name(model),
         messages=[{"role": "user", "content": prompt}],
         temperature=quirks.get('temperature', 0.0),
-        max_tokens=quirks.get('max_tokens', 4096 if quirks['thinking'] else 1), # TODO: thinking vs provider quirk
+        max_completion_tokens=quirks.get('max_tokens', 4096 if quirks['thinking'] else 1), # TODO: thinking vs provider quirk
         logprobs=quirks.get('logprobs', True),
         top_logprobs=quirks.get('top_logprobs', 20),
-        #reasoning_effort='none',
+        #reasoning_effort='low',
         #verbosity='low',
     )
     t0 = time.perf_counter()
@@ -111,3 +111,6 @@ def _get_top_logprobs_skipping_thinking_tokens(logprobs):
         if not logprobs[i].token.strip(): continue # skip empty tokens
         return logprobs[i].top_logprobs
     return []
+
+# TODO: seed
+# TODO: detect thinking model whem no thinking=True is provided ???
