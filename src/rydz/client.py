@@ -86,3 +86,9 @@ def set_quirk(provider, key, value):
 
 def model_name(model):
     return model.split(':')[1]
+
+
+def model_aux_str(model):
+    parts = model.split(':')
+    return parts[2] if len(parts) > 2 else ''
+
