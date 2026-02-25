@@ -185,6 +185,8 @@ These are just examples. For best results, point your favorite AI assistant to t
 
 - **Thinking/reasoning models support** — handle chain-of-thought tokens to extract logprobs from models like GLM-5, Kimi K2.5, Qwen3.5, DeepSeek V3.2, etc.
 - **Multimodal input** — classify images alongside text using vision-capable models
+- **More local inference providers** — vllm, sglang, llama-server, ollama  
+- **More online inference providers** — huggingface, featherless, nscale, zai
 
 ## License
 
