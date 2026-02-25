@@ -58,7 +58,7 @@ def _get_response_from_chat(model, prompt, **kwargs):
         model=model_name(model),
         messages=[{"role": "user", "content": prompt}],
         temperature=quirks.get('temperature', 0.0),
-        max_completion_tokens=max_tokens,
+        max_tokens=max_tokens, # TODO: vs max_completion_tokens
         logprobs=quirks.get('logprobs', True),
         top_logprobs=quirks.get('top_logprobs', 20),
         #reasoning_effort='low',
