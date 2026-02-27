@@ -14,7 +14,7 @@ def _get_response_from_responses(model, prompt, **kwargs):
     for tag in ['thinking']:
         quirks[tag] = tag in aux_str
     quirks.update(kwargs)
-    max_tokens = quirks.get('max_tokens', 1)
+    max_tokens = quirks.get('max_tokens') or 1
     if quirks['thinking']:
         max_tokens = max(max_tokens, quirks.get('max_tokens_thinking', 4096))
     client_kwargs = dict(
@@ -33,9 +33,11 @@ def _get_response_from_responses(model, prompt, **kwargs):
     resp.aux = types.SimpleNamespace()
     resp.aux.rtt = time.perf_counter() - t0
     # usage
-    resp.aux.input_tokens  = resp.usage.input_tokens
-    resp.aux.output_tokens = resp.usage.output_tokens
-    # TODO: thinking tokens
+    u = resp.usage
+    resp.aux.input_tokens     = u.input_tokens
+    resp.aux.output_tokens    = u.output_tokens
+    resp.aux.cached_tokens    = u.input_tokens_details.cached_tokens     if u.input_tokens_details  else 0
+    resp.aux.reasoning_tokens = u.output_tokens_details.reasoning_tokens if u.output_tokens_details else 0
     #
     all_logprobs = resp.output[-1].content[0].logprobs
     resp.aux.logprobs = _get_top_logprobs_skipping_thinking_tokens(all_logprobs)
@@ -51,7 +53,7 @@ def _get_response_from_chat(model, prompt, **kwargs):
     for tag in ['thinking']:
         quirks[tag] = tag in aux_str
     quirks.update(kwargs)
-    max_tokens = quirks.get('max_tokens', 1)
+    max_tokens = quirks.get('max_tokens') or 1
     if quirks['thinking']:
         max_tokens = max(max_tokens, quirks.get('max_tokens_thinking', 4096))
     client_kwargs = dict(
@@ -69,9 +71,11 @@ def _get_response_from_chat(model, prompt, **kwargs):
     resp.aux = types.SimpleNamespace()
     resp.aux.rtt = time.perf_counter() - t0
     # usage
-    resp.aux.input_tokens  = resp.usage.prompt_tokens
-    resp.aux.output_tokens = resp.usage.completion_tokens
-    # TODO: thinking tokens from usage ???
+    u = resp.usage
+    resp.aux.input_tokens     = u.prompt_tokens
+    resp.aux.output_tokens    = u.total_tokens - u.prompt_tokens # FIX for xai which exclude reasoning tokens from output_tokens
+    resp.aux.cached_tokens    = u.prompt_tokens_details.cached_tokens        if u.prompt_tokens_details     else 0
+    resp.aux.reasoning_tokens = u.completion_tokens_details.reasoning_tokens if u.completion_tokens_details else 0
     #
     all_logprobs = resp.choices[0].logprobs.content
     resp.aux.logprobs = _get_top_logprobs_skipping_thinking_tokens(all_logprobs)
@@ -118,5 +122,5 @@ def _get_top_logprobs_skipping_thinking_tokens(logprobs):
         return logprobs[i].top_logprobs
     return []
 
-# TODO: seed
+
 # TODO: detect thinking model whem no thinking=True is provided ???
