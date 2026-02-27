@@ -13,7 +13,7 @@ def test_openai():
 
 
 THINKING_KWARGS_MODELS = [
-    "hyperbolic:openai/gpt-oss-120b",
+    "fireworks:accounts/fireworks/models/gpt-oss-120b",
     "xai:grok-4-1-fast",
     "together:MiniMaxAI/MiniMax-M2.5",
 ]
@@ -28,7 +28,7 @@ def test_thinking_kwargs(model):
 def test_thinking_model_name():
     P = "Is 42 > 24? Answer YES or NO."
     A = "YES"
-    model = "hyperbolic:openai/gpt-oss-120b:thinking"
+    model = "fireworks:accounts/fireworks/models/gpt-oss-120b:thinking"
     resp = get_logprobs_response(model, P)
     assert get_probability(resp, A) > 0.9
 
