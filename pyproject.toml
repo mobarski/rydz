@@ -1,6 +1,6 @@
 [project]
 name = "rydz"
-version = "0.1.0"
+version = "0.2.0"
 description = "LLM-based classification via logprobs — one call, one token, full confidence scores"
 requires-python = ">=3.9"
 dependencies = [
@@ -19,7 +19,10 @@ classifiers = [
 Homepage = "https://github.com/mobarski/rydz"
 
 [dependency-groups]
-dev = ["pytest>=8.0.0"]
+dev = [
+    "pytest>=8.0.0",
+    "rich>=14.3.3",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rydz"]

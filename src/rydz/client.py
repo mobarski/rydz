@@ -4,20 +4,31 @@ import threading
 import openai
 
 BASE_URL = {
-    'lmstudio':   "http://localhost:1234/v1",
-    'openrouter': "https://openrouter.ai/api/v1",
-    'hyperbolic': "https://api.hyperbolic.xyz/v1",
-    'fireworks':  "https://api.fireworks.ai/inference/v1",
-    'together':   "https://api.together.xyz/v1",
-    'openai':     "https://api.openai.com/v1",
-    'xai':        "https://api.x.ai/v1/",
-    'google':     "https://generativelanguage.googleapis.com/v1beta/",
+    'lmstudio':    "http://localhost:1234/v1",
+    'openrouter':  "https://openrouter.ai/api/v1",
+    'hyperbolic':  "https://api.hyperbolic.xyz/v1",
+    'fireworks':   "https://api.fireworks.ai/inference/v1",
+    'together':    "https://api.together.xyz/v1",
+    'openai':      "https://api.openai.com/v1",
+    'xai':         "https://api.x.ai/v1/",
+    'google':      "https://generativelanguage.googleapis.com/v1beta/",
+    'cerebras':    "https://api.cerebras.ai/v1",
+    'novita':      "https://api.novita.ai/openai",
+    'groq':        "https://api.groq.com/openai/v1", # NO LOGPROBS
+    'baseten':     "https://inference.baseten.co/v1", # NO LOGPROBS
+    'siliconflow': "https://api.siliconflow.com/v1", # NO LOGPROBS
+    'deepinfra':   "https://api.deepinfra.com/v1/openai", # NO LOGPROBS (streaming api only, one logprob per token)
+    'huggingface': "https://router.huggingface.co/v1", # NO LOGPROBS
+    'nebius':      "https://api.tokenfactory.nebius.com/v1/", # ??? ugly credit card input
 }
+# TODO: novita, nebius
 QUIRKS = {
-    'lmstudio':  {'endpoint': 'responses', 'max_tokens': 2},
-    'openai':    {'max_tokens': 16},
-    'xai':       {'top_logprobs': 8},
-    'fireworks': {'top_logprobs': 5},
+    'lmstudio':    {'endpoint': 'responses', 'max_tokens': 2},
+    'openai':      {'max_tokens': 16},
+    'xai':         {'top_logprobs': 8},
+    'fireworks':   {'top_logprobs': 5},
+    'cerebras':    {'temperature': 1e-8},
+    'huggingface': {'get_api_key': lambda model: os.getenv('HF_TOKEN')},
 }
 
 _client_cache = {}
@@ -75,3 +86,9 @@ def set_quirk(provider, key, value):
 
 def model_name(model):
     return model.split(':')[1]
+
+
+def model_aux_str(model):
+    parts = model.split(':')
+    return parts[2] if len(parts) > 2 else ''
+
