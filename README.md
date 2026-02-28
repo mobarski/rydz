@@ -6,6 +6,8 @@ Build and deploy LLM-based classifiers in minutes, not days.
 
 Rydz uses **logprobs** to extract classification probabilities from LLMs in a single API call — no fine-tuning, no training data, no ML pipeline. Just a prompt and a model.
 
+Docs: [DeepWiki](https://deepwiki.com/mobarski/rydz)
+
 ## Why?
 
 A perfect classifier you don't have time to build is worth less than a good-enough one you can deploy right now.
@@ -71,12 +73,12 @@ Logprobs give you calibrated confidence in a single call. No repeated sampling, 
 
 Rydz works best with **instruction-tuned** (chat) models — they follow the prompt and put the answer label as the first token, which is exactly what logprobs extraction needs.
 
-**Reasoning/thinking models** (e.g. GLM-5, Kimi K2.5, DeepSeek V3.2) — they emit chain-of-thought tokens before the answer, so they require a higher `max_tokens` value, cost more, and take longer.
+**Reasoning models** (e.g. GLM-5, Kimi K2.5, DeepSeek V3.2) — they emit chain-of-thought tokens before the answer, so they require a higher `max_tokens` value, cost more, and take longer.
 
-To use reasoning models, add `thinking=True` to the `get_logprobs_response` call or `:thinking` to the model name:
+To use reasoning models, add `reasoning=True` to the `get_logprobs_response` call or add `:reasoning` suffix to the model name:
 ```python
-get_logprobs_response("together:moonshotai/Kimi-K2.5", prompt, thinking=True)
-get_logprobs_response("together:moonshotai/Kimi-K2.5:thinking", prompt)
+get_logprobs_response("together:moonshotai/Kimi-K2.5", prompt, reasoning=True)
+get_logprobs_response("together:moonshotai/Kimi-K2.5:reasoning", prompt)
 ```
 
 ## Beyond naive classifiers
@@ -95,7 +97,7 @@ You don't have to pick one — start simple, scale up when needed.
 - **Provider quirks handled** — different APIs, limits, endpoints — all behind one interface
 - **Parallel processing** — classify thousands of items across providers in seconds
 - **Minimal dependencies** — just `openai`
-- **Thinking/reasoning models** — extract logprobs from first token after chain-of-thought (v0.2)
+- **Reasoning models** — extract logprobs from first token after chain-of-thought (v0.2)
 
 ## Installation
 
@@ -111,7 +113,7 @@ In the future it will be added to the PyPI.
 
 ## Model format
 
-Models use the `provider:model_name` convention (optional `:thinking` suffix for reasoning models):
+Models use the `provider:model_name` convention (optional `:reasoning` suffix for reasoning models):
 
 ```python
 "openai:gpt-4.1-nano"
@@ -119,7 +121,7 @@ Models use the `provider:model_name` convention (optional `:thinking` suffix for
 "together:moonshotai/Kimi-K2-Instruct-0905"
 "hyperbolic:Qwen/Qwen3-Next-80B-A3B-Instruct"
 "lmstudio:bielik-11b-v3.0-instruct"
-"together:moonshotai/Kimi-K2.5:thinking"
+"together:moonshotai/Kimi-K2.5:reasoning"
 ```
 
 ## Supported providers
@@ -204,4 +206,5 @@ MIT
 
 ## Changelog
 
-- **0.2** — thinking/reasoning model support (logprobs extraction after chain-of-thought)
+- **0.2.1** - make reasoning the canonical name for thinking/reasoning in the API and in the docs
+- **0.2** - thinking/reasoning model support (logprobs extraction after chain-of-thought)

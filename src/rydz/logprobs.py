@@ -11,12 +11,12 @@ def _get_response_from_responses(model, prompt, **kwargs):
     provider = model.partition(':')[0]
     aux_str = model_aux_str(model)
     quirks = QUIRKS.get(provider, {}).copy()
-    for tag in ['thinking']:
+    for tag in ['reasoning']:
         quirks[tag] = tag in aux_str
     quirks.update(kwargs)
     max_tokens = quirks.get('max_tokens') or 1
-    if quirks['thinking']:
-        max_tokens = max(max_tokens, quirks.get('max_tokens_thinking', 4096))
+    if quirks['reasoning']:
+        max_tokens = max(max_tokens, quirks.get('max_tokens_reasoning', 4096))
     client_kwargs = dict(
         model=model_name(model),
         input=prompt,
@@ -25,7 +25,7 @@ def _get_response_from_responses(model, prompt, **kwargs):
         max_output_tokens=max_tokens,
         include=['message.output_text.logprobs'],
     )
-    if quirks['thinking']:
+    if quirks['reasoning']:
         client_kwargs['text'] = {"verbosity": "low", "format": {"type": "text"}}
         client_kwargs['reasoning'] = {"effort": "minimal", "summary": "concise"}
     t0 = time.perf_counter()
@@ -40,7 +40,7 @@ def _get_response_from_responses(model, prompt, **kwargs):
     resp.aux.reasoning_tokens = u.output_tokens_details.reasoning_tokens if u.output_tokens_details else 0
     #
     all_logprobs = resp.output[-1].content[0].logprobs
-    resp.aux.logprobs = _get_top_logprobs_skipping_thinking_tokens(all_logprobs)
+    resp.aux.logprobs = _get_top_logprobs_skipping_reasoning_tokens(all_logprobs)
     return resp
 
 
@@ -50,12 +50,12 @@ def _get_response_from_chat(model, prompt, **kwargs):
     provider = model.partition(':')[0]
     aux_str = model_aux_str(model)
     quirks = QUIRKS.get(provider, {}).copy()
-    for tag in ['thinking']:
+    for tag in ['reasoning']:
         quirks[tag] = tag in aux_str
     quirks.update(kwargs)
     max_tokens = quirks.get('max_tokens') or 1
-    if quirks['thinking']:
-        max_tokens = max(max_tokens, quirks.get('max_tokens_thinking', 4096))
+    if quirks['reasoning']:
+        max_tokens = max(max_tokens, quirks.get('max_tokens_reasoning', 4096))
     client_kwargs = dict(
         model=model_name(model),
         messages=[{"role": "user", "content": prompt}],
@@ -78,7 +78,7 @@ def _get_response_from_chat(model, prompt, **kwargs):
     resp.aux.reasoning_tokens = u.completion_tokens_details.reasoning_tokens if u.completion_tokens_details else 0
     #
     all_logprobs = resp.choices[0].logprobs.content
-    resp.aux.logprobs = _get_top_logprobs_skipping_thinking_tokens(all_logprobs)
+    resp.aux.logprobs = _get_top_logprobs_skipping_reasoning_tokens(all_logprobs)
     return resp
 
 
@@ -100,27 +100,27 @@ def get_probability(resp, answer):
     return min(1.0, p_total)
 
 
-def _get_top_logprobs_skipping_thinking_tokens(logprobs):
+def _get_top_logprobs_skipping_reasoning_tokens(logprobs):
     tokens = [t.token for t in logprobs]
-    # detect presence of end-of-thinking anchor token
+    # detect presence of end-of-reasoning anchor token
     for a in ['</think>', '<|message|>']: # TODO: ability to extend this list
         if a in tokens:
             anchor = a
             break
     else:
         anchor = None
-    # get index of end-of-thinking anchor token
+    # get index of end-of-reasoning anchor token
     if anchor:
-        assert anchor in tokens, "END-OF-THINKING not found"
+        assert anchor in tokens, "END-OF-REASONING not found"
         i_anchor = len(tokens) - 1 - tokens[::-1].index(anchor) # index_right
         i_resp = i_anchor + 1
     else:
         i_resp = 0
-    # get logprobs for first non-empty token after end-of-thinking anchor token
+    # get logprobs for first non-empty token after end-of-reasoning anchor token
     for i in range(i_resp, len(logprobs)):
         if not logprobs[i].token.strip(): continue # skip empty tokens
         return logprobs[i].top_logprobs
     return []
 
 
-# TODO: detect thinking model whem no thinking=True is provided ???
+# TODO: detect reasoning model whem no reasoning=True is provided ???

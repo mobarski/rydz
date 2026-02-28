@@ -12,31 +12,31 @@ def test_openai():
     assert get_probability(resp, A) > 0.9
 
 
-THINKING_KWARGS_MODELS = [
+REASONING_KWARGS_MODELS = [
     "fireworks:accounts/fireworks/models/gpt-oss-120b",
     "xai:grok-4-1-fast",
     "together:MiniMaxAI/MiniMax-M2.5",
 ]
-@pytest.mark.parametrize("model", THINKING_KWARGS_MODELS)
-def test_thinking_kwargs(model):
+@pytest.mark.parametrize("model", REASONING_KWARGS_MODELS)
+def test_reasoning_kwargs(model):
     P = "Is 42 > 24? Answer YES or NO."
     A = "YES"
-    resp = get_logprobs_response(model, P, thinking=True)
+    resp = get_logprobs_response(model, P, reasoning=True)
     assert get_probability(resp, A) > 0.9
 
 
-def test_thinking_model_name():
+def test_reasoning_model_name():
     P = "Is 42 > 24? Answer YES or NO."
     A = "YES"
-    model = "fireworks:accounts/fireworks/models/gpt-oss-120b:thinking"
+    model = "fireworks:accounts/fireworks/models/gpt-oss-120b:reasoning"
     resp = get_logprobs_response(model, P)
     assert get_probability(resp, A) > 0.9
 
 
-def manual_test_thinking(model):
+def manual_test_reasoning(model):
     P = "Is 42 > 24? Answer YES or NO."
     A = "YES"
-    resp  = get_logprobs_response(model, P, thinking=True)
+    resp  = get_logprobs_response(model, P, reasoning=True)
     assert get_probability(resp, A) > 0.9
 
 
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     ]
     for model in models:
         print(f"Testing {model}...")
-        manual_test_thinking(model)
+        manual_test_reasoning(model)
