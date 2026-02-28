@@ -6,6 +6,8 @@ Build and deploy LLM-based classifiers in minutes, not days.
 
 Rydz uses **logprobs** to extract classification probabilities from LLMs in a single API call — no fine-tuning, no training data, no ML pipeline. Just a prompt and a model.
 
+Docs: [DeepWiki](https://deepwiki.com/mobarski/rydz)
+
 ## Why?
 
 A perfect classifier you don't have time to build is worth less than a good-enough one you can deploy right now.
