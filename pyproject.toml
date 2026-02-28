@@ -1,6 +1,6 @@
 [project]
 name = "rydz"
-version = "0.2.0"
+version = "0.2.1"
 description = "LLM-based classification via logprobs — one call, one token, full confidence scores"
 requires-python = ">=3.9"
 dependencies = [
