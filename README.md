@@ -13,6 +13,10 @@ Docs: [DeepWiki](https://deepwiki.com/mobarski/rydz)
 A perfect classifier you don't have time to build is worth less than a good-enough one you can deploy right now.
 Rydz gives you the latter — and leaves the door open for the former.
 
+Rydz is an **ad hoc classifier creation tool**: define labels, write a prompt, and get usable probabilities immediately.
+
+It also fits standard ML workflows. In practice, "complex ML model vs no classifier" is rarely a useful comparison. A better baseline is **traditional ML vs ad hoc LLM classifier**, then compare quality lift against total cost (data collection, training, inference, maintenance) to make a real cost/benefit decision.
+
 > **Fun fact:** Contrary to popular belief, "rydz" in the Polish proverb doesn't refer to a mushroom.
 > It's [*Camelina sativa*](https://www.muzeum-radom.pl/turystyka/historia-znanego-porzekadla-lepszy-rydz-niz-nic/1886) — a humble oil plant that thrives where nothing else will grow.
 > Seemed like a fitting name for a library that gets the job done when fancier solutions aren't an option.
