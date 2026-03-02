@@ -67,9 +67,9 @@ This means: **high throughput, low cost, low latency**. Thousands of input token
 | **Rydz (LLM + logprobs)** | **1** | **yes, native** | **none** | **minutes** |
 | LLM + text parsing OR structured output| 1 | no | none | minutes |
 | LLM + repeated sampling | 5–20 | approximate | none | minutes |
-| classical ML | 1 | yes | thousands+ | days–weeks |
+| traditional ML | 1 | yes | thousands+ | days–weeks |
 
-Logprobs give you calibrated confidence in a single call. No repeated sampling, no parsing "yes"/"no" from free text, no training data collection. You get a probability distribution over your labels — directly from the model's internals.
+Logprobs give you calibrated confidence in a single call: no repeated sampling, no parsing "yes"/"no" from free text, and no training data collection. You get a probability distribution over your labels directly from the model's internals.
 
 **[Real-world benchmark:](https://www.linkedin.com/feed/update/urn:li:activity:7431396065020583936/)** 280 book fragments × 8 classification criteria (~1.5M input tokens, 2200+ data points) — processed in **36 seconds for $0.25** using two cloud providers in parallel, or **4 minutes** using a local model (Bielik) on a single RTX 3090.
 
@@ -92,7 +92,9 @@ A single model with a hand-crafted prompt is just the starting point. Rydz's low
 - **Ensemble / majority voting** — score the same input with multiple models and aggregate results for higher accuracy and resilience
 - **Automatic prompt optimization** — integrate with frameworks like [DSPy](https://github.com/stanfordnlp/dspy) to optimize prompts systematically instead of relying on intuition alone
 
-You don't have to pick one — start simple, scale up when needed.
+Rydz is also a practical baseline for production evaluation: compare your traditional ML pipeline against a strong ad hoc LLM classifier, then decide if the extra quality justifies the extra cost and complexity.
+
+You don't have to pick one path upfront — start simple, then scale only where the cost/benefit is clear.
 
 ## Features
 
