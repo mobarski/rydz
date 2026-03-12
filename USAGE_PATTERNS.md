@@ -212,6 +212,69 @@ Do these two documents most likely refer to the same flight, trip, reservation, 
 Answer YES or NO.
 ```
 
+## Duplicate vs near-duplicate vs other
+
+This can work well with Rydz if the classes are operationally defined.
+
+Recommended labels:
+
+- `DUP`
+- `NEAR`
+- `OTHER`
+
+Prefer short labels like these over longer ones such as `DUPLICATES` or `NEAR-DUPLICATES`.
+
+Use this when:
+
+- `DUP` means effectively the same document, same reservation, or same itinerary with only trivial OCR or formatting differences
+- `NEAR` means same underlying event or trip, but with meaningful textual or structural differences
+- `OTHER` means a different trip, booking, or unrelated document
+
+This is useful because logprobs give you:
+
+- `p(DUP)`
+- `p(NEAR)`
+- `p(OTHER)`
+
+That makes ranking and manual review easier, especially for borderline `DUP` vs `NEAR` cases.
+
+Failure mode:
+
+`NEAR` can become a vague catch-all class. If that happens, scores may become unstable and the model may blur `DUP` and `NEAR`.
+
+Practical fix:
+
+If `NEAR` is too fuzzy, split the task into two stages:
+
+1. `Do these two documents refer to the same underlying event or booking?`
+2. `If yes, are they effectively the same document or only a near-duplicate variant?`
+
+## Three-class duplicate prompt
+```
+Read the following two documents and answer the question at the end of this message.
+Your answer must be exactly one of:
+DUP
+NEAR
+OTHER
+
+No spaces, no markup, no xml tags - only one label.
+
+Definitions:
+- DUP = same document, same itinerary, or same reservation, with only trivial differences such as OCR noise, formatting, layout, or small textual corruption
+- NEAR = same underlying trip, booking, or flight-related event, but with meaningful textual or structural differences
+- OTHER = different trip, different booking, or unrelated document
+
+<document1>
+	...
+</document1>
+<document2>
+	...
+</document2>
+
+How should these two documents be classified?
+Answer with exactly one label.
+```
+
 ## Entity relationship scoring in a long document
 ```
 Read the following document and answer the question at the end of this message.
