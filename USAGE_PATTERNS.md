@@ -60,6 +60,7 @@ So labels should ideally be:
 - one token
 - easy for the model to emit first
 - clearly different already at the prefix, not only at the end
+- introduced early in the prompt and repeated again right before the final answer instruction
 
 Prefer:
 
@@ -77,6 +78,15 @@ Bad examples:
 - long labels that differ only near the end
 
 If in doubt, use shorter labels or even coded labels such as `A`, `B`, `C`, then map them back later.
+
+Prompt-formatting tip:
+
+For many models, results improve when the allowed labels are shown twice:
+
+- once near the top, when the task is introduced
+- again at the bottom, immediately before the model must answer
+
+The bottom repetition acts like a final constraint reminder right before the turn is returned to the LLM.
 
 ## Anti-patterns / failure modes
 
@@ -184,7 +194,12 @@ No spaces, no markup, no xml tags - only one label.
 	...
 </text>
 How is Poland related to the flight described in this text?
-Answer with exactly one label.
+Answer with exactly one of:
+TO_POLAND
+FROM_POLAND
+VIA_POLAND
+NOT_POLAND
+UNCLEAR
 ```
 
 ## Flight document detection
@@ -299,7 +314,10 @@ Definitions:
 </document2>
 
 How should these two documents be classified?
-Answer with exactly one label.
+Answer with exactly one of:
+DUP
+NEAR
+OTHER
 ```
 
 ## Entity relationship scoring in a long document
@@ -364,7 +382,10 @@ No spaces, no markup, no xml tags - only one label.
 Claim: SUBJECT VERB OBJECT
 
 How should this claim be classified relative to the document?
-Answer with exactly one label.
+Answer with exactly one of:
+SUPPORTS
+CONTRADICTS
+UNCLEAR
 ```
 
 ## SVO evidence strength prompt
@@ -382,7 +403,10 @@ No spaces, no markup, no xml tags - only one label.
 </document>
 
 How strong is the evidence that SUBJECT VERB OBJECT?
-Answer with exactly one label.
+Answer with exactly one of:
+STRONG
+WEAK
+NONE
 ```
 
 Failure mode:
@@ -428,7 +452,11 @@ No spaces, no markup, no xml tags - only one label.
 	...
 </document>
 How strong is the evidence that person X is associated with travel to Y in this document?
-Answer with exactly one label.
+Answer with exactly one of:
+STRONG
+WEAK
+NONE
+UNCLEAR
 ```
 
 ## Multi-stage filtering example
