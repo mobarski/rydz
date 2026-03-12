@@ -6,12 +6,17 @@ Build and deploy LLM-based classifiers in minutes, not days.
 
 Rydz uses **logprobs** to extract classification probabilities from LLMs in a single API call — no fine-tuning, no training data, no ML pipeline. Just a prompt and a model.
 
+The key advantage: Rydz does not just return a label. It tells you **how uncertain the model is**.
+
 Docs: [DeepWiki](https://deepwiki.com/mobarski/rydz)
 
 ## Why?
 
 A perfect classifier you don't have time to build is worth less than a good-enough one you can deploy right now.
-Rydz gives you the latter — and leaves the door open for the former.
+Rydz gives you the latter — and, crucially, it tells you when the answer is shaky.
+
+That matters because one of the standard complaints about AI systems is that they sound equally confident when they are right and when they are wrong.
+Rydz is useful precisely because it exposes that uncertainty instead of hiding it.
 
 Rydz is an **ad hoc classifier creation tool**: define labels, write a prompt, and get usable probabilities immediately.
 
@@ -60,6 +65,8 @@ results = list(tmap(classify, texts, workers=16))
 
 This means: **high throughput, low cost, low latency**. Thousands of input tokens, 1 output token.
 
+It also means you can route low-confidence cases to humans, apply thresholds, or trigger fallback logic instead of blindly trusting every answer.
+
 ## Why logprobs?
 
 | approach | calls per classification | confidence score | training data | setup time |
@@ -70,6 +77,8 @@ This means: **high throughput, low cost, low latency**. Thousands of input token
 | traditional ML | 1 | yes | thousands+ | days–weeks |
 
 Logprobs give you calibrated confidence in a single call: no repeated sampling, no parsing "yes"/"no" from free text, and no training data collection. You get a probability distribution over your labels directly from the model's internals.
+
+This is the opposite of the usual "black box AI" problem: instead of a bare answer, you get an explicit signal of uncertainty.
 
 **[Real-world benchmark:](https://www.linkedin.com/feed/update/urn:li:activity:7431396065020583936/)** 280 book fragments × 8 classification criteria (~1.5M input tokens, 2200+ data points) — processed in **36 seconds for $0.25** using two cloud providers in parallel, or **4 minutes** using a local model (Bielik) on a single RTX 3090.
 
@@ -99,6 +108,7 @@ You don't have to pick one path upfront — start simple, then scale only where 
 ## Features
 
 - **One thing, done well** — logprobs-based classification
+- **Uncertainty is visible** — get probability distributions, not just labels
 - **Multiple providers** — OpenAI, xAI, Together, Fireworks, Hyperbolic, Cerebras, OpenRouter, LM Studio
 - **Provider quirks handled** — different APIs, limits, endpoints — all behind one interface
 - **Parallel processing** — classify thousands of items across providers in seconds
