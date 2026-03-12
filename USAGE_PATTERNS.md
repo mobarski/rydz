@@ -9,6 +9,7 @@ Especially useful for:
 - document triage
 - page triage inside large PDFs
 - evidence detection
+- entity relationship scoring inside long documents
 - duplicate detection
 - same-event matching
 - multi-stage filtering pipelines
@@ -27,6 +28,9 @@ Second pass: is it specifically about the target topic, entity, route, jurisdict
 ### Evidence detector
 Does this text contain signals typical of the thing we are looking for?
 
+### Repeated entity-query scoring
+Keep one long document fixed and ask many short questions about entities, places, codes, or relationships inside it.
+
 ### Pairwise duplicate check
 Do these two texts refer to the same event, booking, trip, case, person, or document?
 
@@ -43,6 +47,9 @@ Agents often think in terms of search, retrieval, filtering, deduplication, and 
 Many of those steps are really just repeated classification with uncertainty handling.
 
 Rydz is especially useful when the agent should escalate uncertain cases instead of pretending to know.
+
+It is also a strong fit when one long document is paired with many short questions appended at the end.
+That pattern is cache-friendly on hosted APIs and often much faster on local models.
 
 ## Single-text binary classification
 ```
@@ -139,6 +146,59 @@ No spaces, no markup, no xml tags - only YES or NO.
 </document2>
 Do these two documents most likely refer to the same flight, trip, reservation, or boarding event, even if formatting or wording differs?
 Answer YES or NO.
+```
+
+## Entity relationship scoring in a long document
+```
+Read the following document and answer the question at the end of this message.
+Your answer must be either YES or NO - all caps, nothing else.
+No spaces, no markup, no xml tags - only YES or NO.
+<document>
+	...
+</document>
+Is person X associated with a flight ticket, reservation, boarding pass, or itinerary to Y?
+Answer YES or NO.
+```
+
+## Cache-friendly repeated queries over one long document
+
+This pattern is useful when:
+
+- one long document stays fixed
+- many short questions vary at the end
+- you want one score per `X,Y` pair
+- you want to rank candidates by score and inspect the best ones first
+
+Typical workflow:
+
+1. run NER or other extraction to get people, cities, airport codes, organizations, etc.
+2. generate many candidate pairs such as `person -> city` or `person -> airport code`
+3. score each pair with Rydz against the same long document
+4. rank by probability
+5. review only the top results or uncertain middle band
+
+Why this is efficient:
+
+- the large document prefix stays the same
+- only the short question suffix changes
+- hosted APIs may reuse prompt cache, making repeated queries much cheaper
+- local models may reuse KV cache, making repeated queries much faster
+
+## Entity-to-destination strength classification
+```
+Read the following document and answer the question at the end of this message.
+Your answer must be exactly one of:
+STRONG
+WEAK
+NONE
+UNCLEAR
+
+No spaces, no markup, no xml tags - only one label.
+<document>
+	...
+</document>
+How strong is the evidence that person X is associated with travel to Y in this document?
+Answer with exactly one label.
 ```
 
 ## Multi-stage filtering example

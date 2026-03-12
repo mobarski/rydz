@@ -101,6 +101,7 @@ get_logprobs_response("together:moonshotai/Kimi-K2.5:reasoning", prompt)
 A single model with a hand-crafted prompt is just the starting point. Rydz's low cost and high throughput make it practical to build more advanced systems:
 
 - **Ensemble / majority voting** — score the same input with multiple models and aggregate results for higher accuracy and resilience
+- **Cache-friendly repeated queries** — keep one long document fixed, vary short entity-relation questions at the end, and exploit prompt cache / KV cache for much cheaper repeated scoring
 - **Automatic prompt optimization** — integrate with frameworks like [DSPy](https://github.com/stanfordnlp/dspy) to optimize prompts systematically instead of relying on intuition alone
 
 Rydz is also a practical baseline for production evaluation: compare your traditional ML pipeline against a strong ad hoc LLM classifier, then decide if the extra quality justifies the extra cost and complexity.
