@@ -51,6 +51,34 @@ Rydz is especially useful when the agent should escalate uncertain cases instead
 It is also a strong fit when one long document is paired with many short questions appended at the end.
 That pattern is cache-friendly on hosted APIs and often much faster on local models.
 
+## Anti-patterns / failure modes
+
+Rydz is usually a bad fit when:
+
+- the task is open-ended generation rather than classification
+- the answer space is large, fuzzy, or keeps changing
+- you need exact extraction spans, not a score or a small label
+- the model is unlikely to put the answer label first
+- the relevant evidence is buried in a huge document and you did not chunk or prefilter it
+- one label is much safer to over-predict than under-predict, but no thresholding or manual review is used
+
+Common ways agents fail with Rydz:
+
+- asking vague questions such as `is this important?` instead of operational ones
+- using labels that are semantically overlapping, such as `RELATED` vs `PARTLY_RELATED`
+- using labels that may split into multiple tokens or be awkward for the model to emit
+- trusting a raw score without checking calibration on a small sample
+- skipping the uncertain middle band and forcing every case into accept or reject
+- asking entity-relation questions without first generating good candidate pairs
+
+Good fixes:
+
+- rewrite the task as `YES/NO` or a small crisp label set
+- make the labels easy to emit and easy to separate conceptually
+- chunk or prefilter long documents before scoring
+- use thresholds and manual review for borderline scores
+- test prompts on a small labeled sample before large-scale runs
+
 ## Single-text binary classification
 ```
 Read the following text and answer the question at the end of this message.
