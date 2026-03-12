@@ -79,6 +79,42 @@ Good fixes:
 - use thresholds and manual review for borderline scores
 - test prompts on a small labeled sample before large-scale runs
 
+## Bad prompt -> better prompt
+
+Bad:
+`Is this document important?`
+
+Better:
+`Does this page contain flight reservation, boarding pass, or itinerary information worth keeping for further review?`
+
+Bad:
+`Is this about Poland?`
+
+Better:
+`Is this document about a flight to Poland, from Poland, or via Poland?`
+
+Bad:
+`Are these documents similar?`
+
+Better:
+`Do these two documents most likely refer to the same flight, trip, reservation, or boarding event?`
+
+Bad:
+`Is person X mentioned with Y?`
+
+Better:
+`Is there evidence in this document that person X is associated with travel to Y?`
+
+Bad:
+`Classify this into many categories...`
+
+Better:
+Split into stages:
+
+1. `is this relevant at all?`
+2. `what exact relation holds?`
+3. `is the score high enough to accept automatically?`
+
 ## Single-text binary classification
 ```
 Read the following text and answer the question at the end of this message.
