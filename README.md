@@ -10,6 +10,8 @@ The key advantage: Rydz does not just return a label. It tells you **how uncerta
 
 Docs: [DeepWiki](https://deepwiki.com/mobarski/rydz)
 
+Practical agent-oriented examples: [`USAGE_PATTERNS.md`](USAGE_PATTERNS.md)
+
 ## Why?
 
 A perfect classifier you don't have time to build is worth less than a good-enough one you can deploy right now.

@@ -1,4 +1,4 @@
-# Prompt Examples
+# Usage Patterns
 
 ## When Rydz fits
 
