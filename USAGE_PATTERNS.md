@@ -51,6 +51,33 @@ Rydz is especially useful when the agent should escalate uncertain cases instead
 It is also a strong fit when one long document is paired with many short questions appended at the end.
 That pattern is cache-friendly on hosted APIs and often much faster on local models.
 
+## Label design for logprobs
+
+This matters a lot: Rydz reads logprobs from the first output token.
+
+So labels should ideally be:
+
+- one token
+- easy for the model to emit first
+- clearly different already at the prefix, not only at the end
+
+Prefer:
+
+- `DUP` / `NEAR` / `OTHER`
+- `SUPPORTS` / `CONTRADICTS` / `UNCLEAR`
+- `TO_POLAND` / `FROM_POLAND` / `VIA_POLAND` / `NOT_POLAND`
+
+Be careful with labels that share too much prefix or may split awkwardly across tokens.
+
+Bad examples:
+
+- `SUPPORT` / `SUPPORTED`
+- `RELATED` / `RELATION`
+- `STRONG` / `STRONGLY`
+- long labels that differ only near the end
+
+If in doubt, use shorter labels or even coded labels such as `A`, `B`, `C`, then map them back later.
+
 ## Anti-patterns / failure modes
 
 Rydz is usually a bad fit when:
@@ -66,7 +93,7 @@ Common ways agents fail with Rydz:
 
 - asking vague questions such as `is this important?` instead of operational ones
 - using labels that are semantically overlapping, such as `RELATED` vs `PARTLY_RELATED`
-- using labels that may split into multiple tokens or be awkward for the model to emit
+- using labels that may split into multiple tokens or do not separate cleanly at the first token
 - trusting a raw score without checking calibration on a small sample
 - skipping the uncertain middle band and forcing every case into accept or reject
 - asking entity-relation questions without first generating good candidate pairs
@@ -286,6 +313,82 @@ No spaces, no markup, no xml tags - only YES or NO.
 Is person X associated with a flight ticket, reservation, boarding pass, or itinerary to Y?
 Answer YES or NO.
 ```
+
+## SVO validation and graph-edge scoring
+
+This pattern is useful when SVO triples come from:
+
+- extraction from the same document
+- extraction from another document
+- graph database query results
+- any upstream relation-extraction pipeline
+
+Rydz can then score whether the current document:
+
+- supports the triple
+- contradicts the triple
+- says too little to decide
+
+Typical uses:
+
+- validate noisy extracted triples before inserting them into a graph
+- rerank graph-query results against a document
+- check whether document B supports an SVO extracted from document A
+- look for conflicts between sources
+
+This is another strong cache-friendly pattern:
+
+- one long document stays fixed
+- many short SVO claims are appended at the end
+- you get one score per candidate relation
+
+Important label rule:
+
+Because logprobs are read from the first output token, pick labels that separate early and clearly.
+Prefer `SUPPORTS / CONTRADICTS / UNCLEAR` over labels that share long prefixes or differ only near the end.
+
+## SVO support / contradiction prompt
+```
+Read the following document and answer the question at the end of this message.
+Your answer must be exactly one of:
+SUPPORTS
+CONTRADICTS
+UNCLEAR
+
+No spaces, no markup, no xml tags - only one label.
+
+<document>
+	...
+</document>
+
+Claim: SUBJECT VERB OBJECT
+
+How should this claim be classified relative to the document?
+Answer with exactly one label.
+```
+
+## SVO evidence strength prompt
+```
+Read the following document and answer the question at the end of this message.
+Your answer must be exactly one of:
+STRONG
+WEAK
+NONE
+
+No spaces, no markup, no xml tags - only one label.
+
+<document>
+	...
+</document>
+
+How strong is the evidence that SUBJECT VERB OBJECT?
+Answer with exactly one label.
+```
+
+Failure mode:
+
+An extracted SVO may collapse important nuance such as negation, uncertainty, future plans, cancellations, or mistaken identity.
+So the prompt should ask whether the document truly supports the relation, not just whether similar words appear nearby.
 
 ## Cache-friendly repeated queries over one long document
 
